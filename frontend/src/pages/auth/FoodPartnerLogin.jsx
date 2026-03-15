@@ -20,6 +20,8 @@ const FoodPartnerLogin = () => {
 
     console.log(response.data);
 
+    window.localStorage.setItem('fh_partner_logged_in', 'true');
+
     navigate("/create-food"); // Redirect to create food page after login
 
   };

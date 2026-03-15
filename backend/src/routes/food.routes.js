@@ -13,7 +13,7 @@ const upload = multer({
 /* POST /api/food/ [protected]*/
 router.post('/',
     authMiddleware.authFoodPartnerMiddleware,
-    upload.single("mama"),
+    upload.array("videos", 10),
     foodController.createFood)
 
 
@@ -21,6 +21,12 @@ router.post('/',
 router.get("/",
     authMiddleware.authUserMiddleware,
     foodController.getFoodItems)
+
+
+// DELETE /api/food/:id [protected, food partner owns it]
+router.delete('/:id',
+    authMiddleware.authFoodPartnerMiddleware,
+    foodController.deleteFood)
 
 
 router.post('/like',

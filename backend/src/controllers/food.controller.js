@@ -6,24 +6,33 @@ const { v4: uuid } = require("uuid")
 
 
 async function createFood(req, res) {
-    const fileUploadResult = await storageService.uploadFile(req.file.buffer, uuid())
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ message: "No video files provided" });
+    }
 
-    const foodItem = await foodModel.create({
-        name: req.body.name,
-        description: req.body.description,
-        video: fileUploadResult.url,
-        foodPartner: req.foodPartner._id
-    })
+    const createdFoods = [];
+
+    for (const file of req.files) {
+        const fileUploadResult = await storageService.uploadFile(file.buffer, uuid());
+        const foodItem = await foodModel.create({
+            name: req.body.name,
+            description: req.body.description,
+            video: fileUploadResult.url,
+            foodPartner: req.foodPartner._id
+        });
+        createdFoods.push(foodItem);
+    }
 
     res.status(201).json({
-        message: "food created successfully",
-        food: foodItem
-    })
-
+        message: `${createdFoods.length} food items created successfully`,
+        foods: createdFoods
+    });
 }
 
 async function getFoodItems(req, res) {
-    const foodItems = await foodModel.find({})
+    const foodItems = await foodModel
+        .find({})
+        .sort({ createdAt: -1 })
     res.status(200).json({
         message: "Food items fetched successfully",
         foodItems
@@ -129,11 +138,36 @@ async function getSaveFood(req, res) {
 
 }
 
+async function deleteFood(req, res) {
+    const foodId = req.params.id;
+    const partner = req.foodPartner;
+
+    const food = await foodModel.findOneAndDelete({
+        _id: foodId,
+        foodPartner: partner._id
+    });
+
+    if (!food) {
+        return res.status(404).json({
+            message: "Food item not found or not owned by you"
+        });
+    }
+
+    // Clean up likes & saves for this food so counts stay correct on future items
+    await likeModel.deleteMany({ food: foodId });
+    await saveModel.deleteMany({ food: foodId });
+
+    return res.status(200).json({
+        message: "Food item deleted successfully"
+    });
+}
+
 
 module.exports = {
     createFood,
     getFoodItems,
     likeFood,
     saveFood,
-    getSaveFood
+    getSaveFood,
+    deleteFood
 }

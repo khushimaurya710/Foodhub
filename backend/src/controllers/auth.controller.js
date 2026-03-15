@@ -44,7 +44,13 @@ async function registerUser(req, res) {
 
 async function loginUser(req, res) {
 
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
+
+    if (!email || !password) {
+        return res.status(400).json({
+            message: "Email and password are required"
+        });
+    }
 
     const user = await userModel.findOne({
         email
@@ -135,7 +141,13 @@ async function registerFoodPartner(req, res) {
 
 async function loginFoodPartner(req, res) {
 
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
+
+    if (!email || !password) {
+        return res.status(400).json({
+            message: "Email and password are required"
+        });
+    }
 
     const foodPartner = await foodPartnerModel.findOne({
         email

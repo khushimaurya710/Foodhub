@@ -54,14 +54,14 @@ const CreateFood = () => {
 
         formData.append('name', name);
         formData.append('description', description);
-        formData.append("mama", videoFile);
+        formData.append("videos", videoFile);
 
         const response = await axios.post("http://localhost:3000/api/food", formData, {
             withCredentials: true,
         })
 
         console.log(response.data);
-        navigate("/"); // Redirect to home or another page after successful creation
+        navigate("/feed"); // Redirect to feed so partner can see reel live
         // Optionally reset
         // setName(''); setDescription(''); setVideoFile(null);
     };

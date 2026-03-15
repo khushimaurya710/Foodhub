@@ -44,16 +44,20 @@ const ReelFeed = ({ items = [], onLike, onSave, emptyMessage = 'No videos yet.' 
           </div>
         )}
 
-        {items.map((item) => (
-          <section key={item._id} className="reel" role="listitem">
+        {items.map((item, index) => (
+          <section key={item._id ?? index} className="reel" role="listitem">
             <video
-              ref={setVideoRef(item._id)}
+              ref={setVideoRef(item._id ?? index)}
               className="reel-video"
               src={item.video}
               muted
               playsInline
               loop
               preload="metadata"
+              onError={(e) => {
+                // If a video fails to load, pause and hide it to avoid a black screen
+                e.currentTarget.style.display = 'none'
+              }}
             />
 
             <div className="reel-overlay">
@@ -96,7 +100,9 @@ const ReelFeed = ({ items = [], onLike, onSave, emptyMessage = 'No videos yet.' 
               </div>
 
               <div className="reel-content">
-                <p className="reel-description" title={item.description}>{item.description}</p>
+                <p className="reel-description" title={item.description || ''}>
+                  {item.description || 'Fresh dish from one of our partners.'}
+                </p>
                 {item.foodPartner && (
                   <Link className="reel-btn" to={"/food-partner/" + item.foodPartner} aria-label="Visit store">Visit store</Link>
                 )}

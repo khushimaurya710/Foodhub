@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../../styles/profile.css'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
@@ -7,6 +7,7 @@ const Profile = () => {
     const { id } = useParams()
     const [ profile, setProfile ] = useState(null)
     const [ videos, setVideos ] = useState([])
+    const [ deletingId, setDeletingId ] = useState(null)
 
     useEffect(() => {
         axios.get(`http://localhost:3000/api/food-partner/${id}`, { withCredentials: true })
@@ -15,6 +16,17 @@ const Profile = () => {
                 setVideos(response.data.foodPartner.foodItems)
             })
     }, [ id ])
+
+    const handleDelete = async (videoId) => {
+        if (!window.confirm("Delete this reel permanently?")) return;
+        try {
+            setDeletingId(videoId);
+            await axios.delete(`http://localhost:3000/api/food/${videoId}`, { withCredentials: true });
+            setVideos(prev => prev.filter(v => v._id !== videoId));
+        } finally {
+            setDeletingId(null);
+        }
+    }
 
 
     return (
@@ -50,16 +62,25 @@ const Profile = () => {
 
             <section className="profile-grid" aria-label="Videos">
                 {videos.map((v) => (
-                    <div key={v.id} className="profile-grid-item">
-                        {/* Placeholder tile; replace with <video> or <img> as needed */}
-
-
-                        <video
-                            className="profile-grid-video"
-                            style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                            src={v.video} muted ></video>
-
-
+                    <div key={v._id} className="profile-grid-item">
+                        <div className="profile-grid-video-wrapper">
+                            <video
+                                className="profile-grid-video"
+                                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                                src={v.video}
+                                muted
+                                playsInline
+                                loop
+                            />
+                            <button
+                                type="button"
+                                className="profile-delete-btn"
+                                disabled={deletingId === v._id}
+                                onClick={() => handleDelete(v._id)}
+                            >
+                                {deletingId === v._id ? 'Deleting…' : 'Delete'}
+                            </button>
+                        </div>
                     </div>
                 ))}
             </section>

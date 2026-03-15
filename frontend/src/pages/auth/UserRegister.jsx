@@ -27,7 +27,7 @@ const UserRegister = () => {
         })
 
         console.log(response.data);
-
+        window.localStorage.setItem('fh_user_logged_in', 'true');
         navigate("/")
 
     };

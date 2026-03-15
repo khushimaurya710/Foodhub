@@ -20,6 +20,9 @@ const UserLogin = () => {
 
     console.log(response.data);
 
+    // mark logged in for client-side nav changes
+    window.localStorage.setItem('fh_user_logged_in', 'true');
+
     navigate("/"); // Redirect to home after login
 
   };

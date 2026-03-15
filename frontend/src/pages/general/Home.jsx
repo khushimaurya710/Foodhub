@@ -4,43 +4,85 @@ import '../../styles/reels.css'
 import ReelFeed from '../../components/ReelFeed'
 
 const Home = () => {
-    const [ videos, setVideos ] = useState([])
-    // Autoplay behavior is handled inside ReelFeed
+    const [videos, setVideos] = useState([])
+    const [statusMessage, setStatusMessage] = useState("Loading videos...")
 
     useEffect(() => {
         axios.get("http://localhost:3000/api/food", { withCredentials: true })
             .then(response => {
-
                 console.log(response.data);
-
-                setVideos(response.data.foodItems)
+                const items = response.data.foodItems ?? []
+                setVideos(items)
+                if (items.length === 0) {
+                    setStatusMessage("No videos available yet. Check back soon!")
+                } else {
+                    setStatusMessage("")
+                }
             })
-            .catch(() => { /* noop: optionally handle error */ })
+            .catch((error) => {
+                if (error?.response?.status === 401) {
+                    setStatusMessage("Please log in as a user to see food videos.")
+                } else {
+                    setStatusMessage("Could not load videos. Please try again.")
+                }
+            })
     }, [])
 
-    // Using local refs within ReelFeed; keeping map here for dependency parity if needed
-
     async function likeVideo(item) {
+        try {
+            const response = await axios.post(
+                "http://localhost:3000/api/food/like",
+                { foodId: item._id },
+                { withCredentials: true }
+            )
 
-        const response = await axios.post("http://localhost:3000/api/food/like", { foodId: item._id }, {withCredentials: true})
-
-        if(response.data.like){
-            console.log("Video liked");
-            setVideos((prev) => prev.map((v) => v._id === item._id ? { ...v, likeCount: v.likeCount + 1 } : v))
-        }else{
-            console.log("Video unliked");
-            setVideos((prev) => prev.map((v) => v._id === item._id ? { ...v, likeCount: v.likeCount - 1 } : v))
+            if (response.data.like) {
+                setVideos((prev) =>
+                    prev.map((v) =>
+                        v._id === item._id ? { ...v, likeCount: (v.likeCount ?? 0) + 1 } : v
+                    )
+                )
+            } else {
+                setVideos((prev) =>
+                    prev.map((v) =>
+                        v._id === item._id ? { ...v, likeCount: Math.max(0, (v.likeCount ?? 1) - 1) } : v
+                    )
+                )
+            }
+        } catch (error) {
+            if (error?.response?.status === 401) {
+                setStatusMessage("Please log in as a user to like videos.")
+            }
         }
-        
     }
 
     async function saveVideo(item) {
-        const response = await axios.post("http://localhost:3000/api/food/save", { foodId: item._id }, { withCredentials: true })
-        
-        if(response.data.save){
-            setVideos((prev) => prev.map((v) => v._id === item._id ? { ...v, savesCount: v.savesCount + 1 } : v))
-        }else{
-            setVideos((prev) => prev.map((v) => v._id === item._id ? { ...v, savesCount: v.savesCount - 1 } : v))
+        try {
+            const response = await axios.post(
+                "http://localhost:3000/api/food/save",
+                { foodId: item._id },
+                { withCredentials: true }
+            )
+
+            if (response.data.save) {
+                setVideos((prev) =>
+                    prev.map((v) =>
+                        v._id === item._id ? { ...v, savesCount: (v.savesCount ?? 0) + 1 } : v
+                    )
+                )
+            } else {
+                setVideos((prev) =>
+                    prev.map((v) =>
+                        v._id === item._id
+                            ? { ...v, savesCount: Math.max(0, (v.savesCount ?? 1) - 1) }
+                            : v
+                    )
+                )
+            }
+        } catch (error) {
+            if (error?.response?.status === 401) {
+                setStatusMessage("Please log in as a user to save videos.")
+            }
         }
     }
 
@@ -49,7 +91,7 @@ const Home = () => {
             items={videos}
             onLike={likeVideo}
             onSave={saveVideo}
-            emptyMessage="No videos available."
+            emptyMessage={statusMessage || "No videos available."}
         />
     )
 }

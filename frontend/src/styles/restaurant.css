@@ -1,0 +1,338 @@
+@import './theme.css';
+
+.restaurant-page {
+  min-height: 100dvh;
+  background: radial-gradient(circle at top, rgba(15, 23, 42, 0.7), #020617);
+  color: #e5e7eb;
+}
+
+.restaurant-hero {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+}
+
+.restaurant-hero-image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.7);
+  transform: scale(1.05);
+}
+
+.restaurant-hero-overlay {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  padding: 16px 20px 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.3) 0%,
+    rgba(15, 23, 42, 0.8) 40%,
+    rgba(15, 23, 42, 0.95) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.restaurant-back {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  border-radius: 999px;
+  border: none;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.8);
+  color: #e5e7eb;
+}
+
+.restaurant-hero-content h1 {
+  font-size: 1.5rem;
+  margin-bottom: 2px;
+}
+
+.restaurant-meta {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.restaurant-stats {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 0.78rem;
+}
+
+.restaurant-stats span {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+}
+
+.restaurant-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 18px 14px 32px;
+}
+
+.restaurant-menu-header h2 {
+  font-size: 1.1rem;
+  margin-bottom: 2px;
+}
+
+.restaurant-menu-header p {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.restaurant-card {
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  cursor: pointer;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+  transform: translateY(0) scale(1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.restaurant-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85);
+  border-color: rgba(251, 191, 36, 0.7);
+}
+
+.restaurant-card-image {
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.restaurant-card-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(15, 23, 42, 0.95) 100%);
+}
+
+.restaurant-card-body {
+  padding: 10px 11px 12px;
+}
+
+.restaurant-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.restaurant-card-head h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.restaurant-price {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fbbf24;
+}
+
+.restaurant-desc {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.restaurant-nutrition {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 0.7rem;
+  margin-bottom: 8px;
+}
+
+.restaurant-nutrition span {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(31, 41, 55, 0.9);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+.restaurant-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.restaurant-btn-primary,
+.restaurant-btn-secondary {
+  flex: 1;
+  border-radius: 999px;
+  border: none;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.restaurant-btn-primary {
+  background: linear-gradient(135deg, #f97316, #ec4899);
+  color: #fff;
+}
+
+.restaurant-btn-secondary {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  color: #e5e7eb;
+}
+
+.restaurant-cart {
+  position: sticky;
+  bottom: 12px;
+  margin-top: 16px;
+}
+
+.restaurant-cart-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.8);
+}
+
+.restaurant-cart-sub {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.checkout-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 260;
+}
+
+.checkout-sheet {
+  width: min(420px, 100%);
+  background: #020617;
+  color: #e5e7eb;
+  border-left: 1px solid rgba(148, 163, 184, 0.7);
+  display: flex;
+  flex-direction: column;
+}
+
+.checkout-header {
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(55, 65, 81, 1);
+}
+
+.checkout-close {
+  border-radius: 999px;
+  border: none;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.8);
+  color: #e5e7eb;
+}
+
+.checkout-body {
+  display: grid;
+  grid-template-columns: 1.1fr 1.2fr;
+  gap: 12px;
+  padding: 12px;
+  height: 100%;
+}
+
+.checkout-summary {
+  font-size: 0.8rem;
+}
+
+.checkout-summary ul {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  max-height: 210px;
+  overflow: auto;
+}
+
+.checkout-summary li {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.checkout-summary li button {
+  border: none;
+  background: none;
+  color: #f97316;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.checkout-total {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(55, 65, 81, 1);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.checkout-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.checkout-form input,
+.checkout-form textarea {
+  border-radius: 8px;
+  border: 1px solid rgba(55, 65, 81, 1);
+  background: #020617;
+  color: #e5e7eb;
+  padding: 5px 7px;
+  font-size: 0.8rem;
+}
+
+.checkout-row {
+  display: flex;
+  gap: 6px;
+}
+
+@media (max-width: 800px) {
+  .checkout-body {
+    grid-template-columns: 1fr;
+  }
+}
+
