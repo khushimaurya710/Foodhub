@@ -28,7 +28,7 @@ It includes an AI chatbot for assistance and a short video (reel) feature for in
  ![Home](home.png)
 
  ### Restaurant Page 
- ![Restaurant](Restaurant.png)
+ ![Restaurant](restaurants.png)
 
  ### Chatbot Feature  
- ![Chatbot](Chatbot.png)
+ ![Chatbot](chatbot.png)
