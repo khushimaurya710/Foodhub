@@ -22,3 +22,13 @@ It includes an AI chatbot for assistance and a short video (reel) feature for in
 2. Install dependencies using `npm install`  
 3. Start the server using `npm start`  
 4. Open in browser at `localhost:3000`
+
+## Screenshots
+ ### Home Page 
+ ![Home](home.png)
+
+ ### Restaurant Page 
+ ![Restaurant](Restaurant.png)
+
+ ### Chatbot Feature  
+ ![Chatbot](Chatbot.png)
