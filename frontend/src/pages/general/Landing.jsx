@@ -1,102 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { LANDING_RESTAURANTS } from '../../data/restaurants'
 
-/* ─── Real dish data — prices from Zomato/Swiggy listings ─── */
-const DISHES = [
-  {
-    id: 1,
-    name: 'Hyderabadi Dum Biryani',
-    restaurant: 'Paradise Kitchen',
-    category: 'Biryani',
-    price: 349,
-    originalPrice: 420,
-    rating: 4.8,
-    orders: '9.1Cr+',
-    eta: '28 min',
-    tag: '#1 in India',
-    tagColor: '#FF6B2B',
-    image: 'https://images.pexels.com/photos/1624487/pexels-photo-1624487.jpeg?auto=compress&cs=tinysrgb&w=600',
-  },
-  {
-    id: 2,
-    name: 'Margherita Wood-Fire Pizza',
-    restaurant: 'La Piazza',
-    category: 'Pizza',
-    price: 299,
-    originalPrice: 380,
-    rating: 4.5,
-    orders: '5.8Cr+',
-    eta: '22 min',
-    tag: '#2 Most Ordered',
-    tagColor: '#E8B84B',
-    image: 'https://images.pexels.com/photos/1566837/pexels-photo-1566837.jpeg?auto=compress&cs=tinysrgb&w=600',
-  },
-  {
-    id: 3,
-    name: 'Classic Smash Burger',
-    restaurant: 'Urban Burger Co.',
-    category: 'Burger',
-    price: 229,
-    originalPrice: 280,
-    rating: 4.4,
-    orders: '2.3Cr+',
-    eta: '20 min',
-    tag: 'Trending',
-    tagColor: '#6ECFBA',
-    image: 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=600',
-  },
-  {
-    id: 4,
-    name: 'Butter Chicken + Naan',
-    restaurant: 'Punjabi Dhaba',
-    category: 'North Indian',
-    price: 389,
-    originalPrice: 460,
-    rating: 4.7,
-    orders: '4.5Cr+',
-    eta: '30 min',
-    tag: 'Fan Favourite',
-    tagColor: '#E84A7F',
-    image: 'https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg?auto=compress&cs=tinysrgb&w=600',
-  },
-  {
-    id: 5,
-    name: 'Masala Dosa',
-    restaurant: 'Saravana Bhavan',
-    category: 'South Indian',
-    price: 149,
-    originalPrice: 180,
-    rating: 4.6,
-    orders: '2.3Cr+',
-    eta: '18 min',
-    tag: 'Breakfast Hit',
-    tagColor: '#8B5CF6',
-    image: 'https://images.pexels.com/photos/5560763/pexels-photo-5560763.jpeg?auto=compress&cs=tinysrgb&w=600',
-  },
-  {
-    id: 6,
-    name: 'Peri Peri Noodle Bowl',
-    restaurant: 'Wok & Roll',
-    category: 'Noodles',
-    price: 199,
-    originalPrice: 250,
-    rating: 4.3,
-    orders: '4.5Cr+',
-    eta: '25 min',
-    tag: 'Spicy Pick',
-    tagColor: '#EF4444',
-    image: 'https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=600',
-  },
-]
-
-const CATEGORIES = [
-  { id: 'all', label: 'All', icon: '🍽️' },
-  { id: 'Biryani', label: 'Biryani', icon: '🍖' },
-  { id: 'Pizza', label: 'Pizza', icon: '🍕' },
-  { id: 'Burger', label: 'Burger', icon: '🍔' },
-  { id: 'North Indian', label: 'North Indian', icon: '🫕' },
-  { id: 'South Indian', label: 'South Indian', icon: '🥘' },
-  { id: 'Noodles', label: 'Noodles', icon: '🍜' },
+const FILTERS = ['All', 'Pure Veg', 'Desserts', 'Snacks', 'Beverages']
+const SORT_OPTIONS = [
+  { value: 'rating', label: 'Rating: High to Low' },
+  { value: 'eta', label: 'Delivery Time: Fastest' },
+  { value: 'alpha', label: 'Alphabetical' },
+  { value: 'popularity', label: 'Popularity' },
 ]
 
 const MARQUEE = [
@@ -334,9 +245,58 @@ html { font-size: 16px; scroll-behavior: smooth; }
 }
 .chip:hover, .chip.on { border-color:var(--orange); background:var(--orange-dim); color:#FF8C5A; transform:translateY(-3px); }
 
+.search-wrap {
+  margin-top: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.food-search {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 999px;
+  color: var(--text);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-b);
+  font-size: 0.9rem;
+  outline: none;
+}
+.food-search:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 2px rgba(255,107,43,0.18);
+}
+.search-clear {
+  background: none;
+  border: 1px solid var(--border2);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.recent-row {
+  margin-top: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.recent-title { font-size: 0.75rem; color: var(--muted); }
+.recent-chip {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
 /* DISHES */
 .dishes-sec { padding:5rem 3rem; }
 .dishes-hd { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:2.5rem; }
+.dishes-controls { align-items: center; gap: 1rem; flex-wrap: wrap; }
 .dishes-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
 
 .dcard {
@@ -351,7 +311,7 @@ html { font-size: 16px; scroll-behavior: smooth; }
 .dimg { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.55s var(--ease); }
 .dcard:hover .dimg { transform:scale(1.08); }
 
-.dtag { position:absolute; top:0.75rem; left:0.75rem; padding:0.22rem 0.6rem; border-radius:100px; font-size:0.62rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#fff; }
+.dtag { position:absolute; top:0.75rem; left:0.75rem; padding:0.22rem 0.6rem; border-radius:100px; font-size:0.62rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#fff; background:var(--orange); }
 
 .dsave {
   position:absolute; top:0.75rem; right:0.75rem;
@@ -370,6 +330,19 @@ html { font-size: 16px; scroll-behavior: smooth; }
 .drating { display:flex; align-items:center; gap:0.2rem; font-size:0.75rem; font-weight:500; flex-shrink:0; }
 .dstar { color:var(--gold); }
 .drest { font-size:0.7rem; color:var(--muted); margin-bottom:0.75rem; }
+.filter-meta {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.7rem;
+}
+.veg-tag, .popular-tag {
+  font-size: 0.62rem;
+  border: 1px solid var(--border2);
+  background: var(--surface3);
+  border-radius: 999px;
+  padding: 0.2rem 0.45rem;
+}
 .dbot { display:flex; align-items:center; justify-content:space-between; }
 .dprice-block { display:flex; align-items:baseline; gap:0.35rem; }
 .dprice { font-family:var(--font-d); font-size:1.3rem; font-weight:700; }
@@ -383,6 +356,26 @@ html { font-size: 16px; scroll-behavior: smooth; }
 }
 .dadd:hover { background:var(--orange); color:#fff; transform:scale(1.06); box-shadow:0 4px 14px rgba(255,107,43,0.32); }
 .deta { font-size:0.65rem; color:var(--muted); display:flex; align-items:center; gap:0.3rem; margin-top:0.6rem; border-top:1px solid var(--border); padding-top:0.6rem; }
+
+.sort-wrap { display: flex; align-items: center; gap: 0.5rem; }
+.sort-label { color: var(--muted); font-size: 0.8rem; }
+.sort-select {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0.5rem 0.7rem;
+  font-family: var(--font-b);
+}
+.empty-state {
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+  padding: 1rem;
+  border: 1px dashed var(--border2);
+  border-radius: 12px;
+  background: var(--surface2);
+}
 
 /* FEATURES */
 .feat-sec { padding:5rem 3rem; background:var(--surface); position:relative; overflow:hidden; }
@@ -428,7 +421,10 @@ html { font-size: 16px; scroll-behavior: smooth; }
 
 export default function Landing() {
   const navigate = useNavigate()
-  const [activeCat, setActiveCat] = useState('all')
+  const [activeFilter, setActiveFilter] = useState('All')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [recentSearches, setRecentSearches] = useState([])
+  const [sortBy, setSortBy] = useState('rating')
   const [scrolled, setScrolled] = useState(false)
   const [saved, setSaved] = useState(new Set())
   const [loggedIn, setLoggedIn] = useState(false)
@@ -444,8 +440,86 @@ export default function Landing() {
     setLoggedIn(userFlag)
   }, [])
 
-  const filtered = activeCat === 'all' ? DISHES : DISHES.filter(d => d.category === activeCat)
-  const disc = (p, o) => Math.round((1 - p / o) * 100)
+  useEffect(() => {
+    const fromStorage = JSON.parse(window.localStorage.getItem('fh_recent_food_searches') || '[]')
+    if (Array.isArray(fromStorage)) setRecentSearches(fromStorage.slice(0, 5))
+  }, [])
+
+  const storeRecentSearch = (value) => {
+    const cleaned = value.trim()
+    if (!cleaned) return
+    setRecentSearches((prev) => {
+      const next = [cleaned, ...prev.filter((item) => item.toLowerCase() !== cleaned.toLowerCase())].slice(0, 5)
+      window.localStorage.setItem('fh_recent_food_searches', JSON.stringify(next))
+      return next
+    })
+  }
+
+  const parseEtaMins = (eta) => {
+    const match = eta.match(/\d+/)
+    return match ? Number(match[0]) : Number.MAX_SAFE_INTEGER
+  }
+
+  const searchLower = searchTerm.trim().toLowerCase()
+  const getNormalizedCategories = (restaurant) => {
+    const categories = new Set()
+    restaurant.menu.forEach((item) => {
+      const cat = (item.cat || '').toLowerCase()
+      if (!cat) return
+      if (cat.includes('dessert') || cat.includes('cake') || cat.includes('pastr')) categories.add('Desserts')
+      if (cat.includes('beverage') || cat.includes('drink')) categories.add('Beverages')
+      if (cat.includes('snack') || cat.includes('side') || cat.includes('starter') || cat.includes('burger') || cat.includes('wrap') || cat.includes('sandwich')) categories.add('Snacks')
+    })
+    if (restaurant.vegType === 'Veg') categories.add('Pure Veg')
+    return categories
+  }
+
+  const matchesFilter = (restaurant, selectedFilter) => {
+    if (selectedFilter === 'All') return true
+    const normalized = getNormalizedCategories(restaurant)
+    return normalized.has(selectedFilter)
+  }
+
+  const restaurantsMatchedByFood = useMemo(() => {
+    if (!searchLower) return LANDING_RESTAURANTS
+    return LANDING_RESTAURANTS.filter((restaurant) =>
+      restaurant.menu.some((item) => item.name.toLowerCase().includes(searchLower))
+    )
+  }, [searchLower])
+
+  const visibleRestaurants = useMemo(() => {
+    let items = [...LANDING_RESTAURANTS]
+    items = items.filter((restaurant) => matchesFilter(restaurant, activeFilter))
+    if (searchLower) {
+      items = items.filter((restaurant) =>
+        restaurant.menu.some((item) => item.name.toLowerCase().includes(searchLower))
+      )
+    }
+    if (sortBy === 'rating') items.sort((a, b) => b.rating - a.rating)
+    if (sortBy === 'eta') items.sort((a, b) => parseEtaMins(a.eta) - parseEtaMins(b.eta))
+    if (sortBy === 'alpha') items.sort((a, b) => a.name.localeCompare(b.name))
+    if (sortBy === 'popularity') items.sort((a, b) => b.popularity - a.popularity)
+    return items
+  }, [activeFilter, searchLower, sortBy])
+
+  const topDishes = useMemo(() => LANDING_RESTAURANTS.slice(0, 3).map((restaurant) => {
+    const primary = restaurant.menu[0]
+    return {
+      id: restaurant.id,
+      name: primary?.name || restaurant.popularDish,
+      image: primary?.image || restaurant.image,
+      price: primary?.price || 199,
+    }
+  }), [])
+
+  const handleSearchKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      storeRecentSearch(searchTerm)
+    }
+  }
+
+  const clearSearch = () => setSearchTerm('')
+
   const toggleSave = (e, id) => {
     e.stopPropagation()
     setSaved(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
@@ -489,7 +563,12 @@ export default function Landing() {
                 <span className="pcircle"><span className="ptri" /></span>
                 Watch Food Reels
               </button>
-              <button className="btn-ol" onClick={() => navigate('/user/register')}>Browse menu →</button>
+              <button
+                className="btn-ol"
+                onClick={() => document.getElementById('restaurants')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Browse restaurants →
+              </button>
             </div>
             <div className="stats-row">
               {STATS.map(s => (
@@ -501,7 +580,7 @@ export default function Landing() {
           {/* Floating food cards */}
           <div className="hero-r">
             <div className="food-stack">
-              {[DISHES[0], DISHES[1], DISHES[3]].map((d, i) => (
+              {topDishes.map((d) => (
                 <div key={d.id} className="fc">
                   <img src={d.image} alt={d.name} />
                   <div className="fc-ov">
@@ -533,65 +612,118 @@ export default function Landing() {
 
         {/* CATEGORIES */}
         <section className="cat-sec">
-          <span className="sec-lbl">Browse by craving</span>
-          <h2 className="sec-title">What are you craving?</h2>
+          <span className="sec-lbl">Search food</span>
+          <h2 className="sec-title">Find by dish name</h2>
+          <div className="search-wrap">
+            <input
+              className="food-search"
+              type="text"
+              placeholder="Search food..."
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              onBlur={() => storeRecentSearch(searchTerm)}
+              onKeyDown={handleSearchKeyDown}
+            />
+            {searchTerm && (
+              <button className="search-clear" onClick={clearSearch}>Clear</button>
+            )}
+          </div>
+          {recentSearches.length > 0 && (
+            <div className="recent-row">
+              <span className="recent-title">Recent:</span>
+              {recentSearches.map((entry) => (
+                <button
+                  key={entry}
+                  className="recent-chip"
+                  onClick={() => setSearchTerm(entry)}
+                >
+                  {entry}
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="cat-sec" style={{ paddingTop: '0' }}>
+          <span className="sec-lbl">Filter restaurants</span>
+          <h2 className="sec-title">Choose your preference</h2>
           <div className="cat-row">
-            {CATEGORIES.map(c => (
-              <button key={c.id} className={`chip${activeCat === c.id ? ' on' : ''}`} onClick={() => setActiveCat(c.id)}>
-                <span>{c.icon}</span>{c.label}
+            {FILTERS.map((filterName) => (
+              <button
+                key={filterName}
+                className={`chip${activeFilter === filterName ? ' on' : ''}`}
+                onClick={() => setActiveFilter(filterName)}
+              >
+                {filterName}
               </button>
             ))}
           </div>
         </section>
 
-        {/* DISHES */}
-        <section id="dishes" className="dishes-sec">
-          <div className="dishes-hd">
+        {/* RESTAURANTS */}
+        <section id="restaurants" className="dishes-sec">
+          <div className="dishes-hd dishes-controls">
             <div>
-              <span className="sec-lbl">Trending now</span>
-              <h2 className="sec-title">What's hot today</h2>
+              <span className="sec-lbl">Restaurants</span>
+              <h2 className="sec-title">Explore all restaurants</h2>
             </div>
-            <button className="btn-g" onClick={() => navigate('/feed')}>View all →</button>
+            <div className="sort-wrap">
+              <label htmlFor="sort-restaurants" className="sort-label">Sort:</label>
+              <select id="sort-restaurants" className="sort-select" value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+                {SORT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
           </div>
+
+          {searchLower && restaurantsMatchedByFood.length === 0 && (
+            <div className="empty-state">Food not available</div>
+          )}
+          {searchLower && restaurantsMatchedByFood.length > 0 && visibleRestaurants.length === 0 && (
+            <div className="empty-state">No restaurants match your search</div>
+          )}
+          {!searchLower && visibleRestaurants.length === 0 && (
+            <div className="empty-state">No restaurants match your search</div>
+          )}
+
           <div className="dishes-grid">
-            {filtered.map(dish => {
-              const targetId =
-                dish.category === 'Biryani' || dish.category === 'North Indian'
-                  ? 1
-                  : dish.category === 'Pizza'
-                  ? 2
-                  : 3
-              return (
+            {visibleRestaurants.map((restaurant) => (
               <div
-                key={dish.id}
+                key={restaurant.id}
                 className="dcard"
-                onClick={() => navigate(`/restaurants/${targetId}`)}
+                onClick={() => {
+                  storeRecentSearch(searchTerm)
+                  navigate(`/restaurants/${restaurant.id}`)
+                }}
               >
                 <div className="dimg-wrap">
-                  <img src={dish.image} alt={dish.name} className="dimg" loading="lazy" />
-                  <div className="dtag" style={{ background: dish.tagColor }}>{dish.tag}</div>
-                  <button className="dsave" onClick={e => toggleSave(e, dish.id)}>
-                    {saved.has(dish.id) ? '♥' : '♡'}
+                  <img src={restaurant.image} alt={restaurant.name} className="dimg" loading="lazy" />
+                  <div className="dtag">{restaurant.popularDish}</div>
+                  <button className="dsave" onClick={e => toggleSave(e, restaurant.id)}>
+                    {saved.has(restaurant.id) ? '♥' : '♡'}
                   </button>
                 </div>
                 <div className="dbody">
                   <div className="dtop">
-                    <div className="dname">{dish.name}</div>
-                    <div className="drating"><span className="dstar">★</span>{dish.rating}</div>
+                    <div className="dname">{restaurant.name}</div>
+                    <div className="drating"><span className="dstar">★</span>{restaurant.rating}</div>
                   </div>
-                  <div className="drest">{dish.restaurant} · {dish.orders} orders</div>
+                  <div className="drest">
+                    {restaurant.cuisine}
+                  </div>
+                  <div className="filter-meta">
+                    <span className="veg-tag">{restaurant.vegType}</span>
+                    <span className="popular-tag">Popular: {restaurant.popularDish}</span>
+                  </div>
                   <div className="dbot">
-                    <div className="dprice-block">
-                      <span className="dprice">₹{dish.price}</span>
-                      <span className="dorig">₹{dish.originalPrice}</span>
-                      <span className="ddisc">{disc(dish.price, dish.originalPrice)}% off</span>
-                    </div>
-                    <button className="dadd" onClick={e => { e.stopPropagation(); navigate('/user/register') }}>+ Add</button>
+                    <div className="dprice-block"><span className="dprice">{restaurant.popularDish}</span></div>
+                    <button className="dadd" onClick={e => { e.stopPropagation(); navigate(`/restaurants/${restaurant.id}`) }}>View Menu</button>
                   </div>
-                  <div className="deta"><span>🕐</span>{dish.eta} delivery</div>
+                  <div className="deta"><span>🕐</span>{restaurant.eta}</div>
                 </div>
               </div>
-            )})}
+            ))}
           </div>
         </section>
 

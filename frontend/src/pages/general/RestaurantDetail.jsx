@@ -1,72 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-
-/* ─── Data ─── */
-const RESTAURANT_MENU = {
-  1: {
-    name: 'Paradise Kitchen',
-    area: 'Old Town • Indore',
-    cuisine: 'Hyderabadi Biryani, North Indian',
-    rating: 4.8,
-    reviews: '12.4k',
-    eta: '25–35 min',
-    costForTwo: '₹600 for two',
-    heroImage: 'https://images.pexels.com/photos/1624487/pexels-photo-1624487.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    categories: ['All', 'Biryani', 'Starters', 'Breads', 'Desserts'],
-    foods: [
-      { id:'1a', name:'Hyderabadi Dum Biryani (Chicken)', price:349, cat:'Biryani', image:'https://images.pexels.com/photos/1117862/pexels-photo-1117862.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Slow-cooked basmati rice with marinated chicken, fried onions and our house spice mix.', nutrition:{calories:780,protein:'32g',carbs:'89g',fat:'32g'}, spice:'Medium', badge:'Bestseller' },
-      { id:'1b', name:'Veg Dum Biryani', price:319, cat:'Biryani', image:'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Seasonal vegetables, paneer and mint layered with fragrant basmati rice.', nutrition:{calories:620,protein:'18g',carbs:'92g',fat:'18g'}, spice:'Mild', badge:null },
-      { id:'1c', name:'Double Egg Biryani', price:289, cat:'Biryani', image:'https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Two masala-coated boiled eggs tucked into slow-cooked dum rice.', nutrition:{calories:650,protein:'24g',carbs:'84g',fat:'20g'}, spice:'Medium', badge:null },
-      { id:'1d', name:'Paneer Tikka Biryani', price:359, cat:'Biryani', image:'https://images.pexels.com/photos/7245466/pexels-photo-7245466.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Charred paneer tikka tossed through smoky dum biryani.', nutrition:{calories:710,protein:'26g',carbs:'86g',fat:'24g'}, spice:'Spicy', badge:'Chef\'s Pick' },
-      { id:'1e', name:'Tandoori Chicken Starter', price:299, cat:'Starters', image:'https://images.pexels.com/photos/5639425/pexels-photo-5639425.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Char-grilled chicken leg pieces with yoghurt, chilli and lime.', nutrition:{calories:430,protein:'38g',carbs:'6g',fat:'27g'}, spice:'Spicy', badge:null },
-      { id:'1f', name:'Butter Garlic Naan (2pc)', price:99, cat:'Breads', image:'https://images.pexels.com/photos/4109131/pexels-photo-4109131.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Soft leavened bread finished with butter, garlic and coriander.', nutrition:{calories:260,protein:'7g',carbs:'40g',fat:'7g'}, spice:'None', badge:null },
-      { id:'1g', name:'Raita Trio', price:89, cat:'Starters', image:'https://images.pexels.com/photos/4144234/pexels-photo-4144234.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Cooling cucumber, boondi and onion raita selection.', nutrition:{calories:140,protein:'6g',carbs:'12g',fat:'7g'}, spice:'None', badge:null },
-      { id:'1h', name:'Gulab Jamun (2pc)', price:129, cat:'Desserts', image:'https://images.pexels.com/photos/4110000/pexels-photo-4110000.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Warm khoya dumplings in cardamom sugar syrup.', nutrition:{calories:320,protein:'5g',carbs:'52g',fat:'10g'}, spice:'None', badge:null },
-    ]
-  },
-  2: {
-    name: 'La Piazza',
-    area: 'Vijay Nagar • Indore',
-    cuisine: 'Italian, Pizza',
-    rating: 4.5,
-    reviews: '8.1k',
-    eta: '20–30 min',
-    costForTwo: '₹800 for two',
-    heroImage: 'https://images.pexels.com/photos/2619967/pexels-photo-2619967.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    categories: ['All', 'Pizzas', 'Sides', 'Soups', 'Desserts'],
-    foods: [
-      { id:'2a', name:'Margherita Wood-Fire Pizza', price:299, cat:'Pizzas', image:'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'San Marzano tomatoes, fresh mozzarella, basil and extra-virgin olive oil.', nutrition:{calories:540,protein:'22g',carbs:'68g',fat:'18g'}, spice:'None', badge:'Bestseller' },
-      { id:'2b', name:'Peri Peri Paneer Pizza', price:349, cat:'Pizzas', image:'https://images.pexels.com/photos/2619967/pexels-photo-2619967.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Peri peri paneer, onions, capsicum and chilli flakes.', nutrition:{calories:610,protein:'25g',carbs:'74g',fat:'21g'}, spice:'Spicy', badge:null },
-      { id:'2c', name:'Farmhouse Veggie Pizza', price:329, cat:'Pizzas', image:'https://images.pexels.com/photos/825661/pexels-photo-825661.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Bell peppers, sweet corn, olives and mozzarella on a thin crust.', nutrition:{calories:560,protein:'20g',carbs:'72g',fat:'19g'}, spice:'Mild', badge:null },
-      { id:'2d', name:'Four Cheese Pizza', price:379, cat:'Pizzas', image:'https://images.pexels.com/photos/803290/pexels-photo-803290.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Mozzarella, cheddar, parmesan and blue cheese with garlic oil drizzle.', nutrition:{calories:640,protein:'29g',carbs:'66g',fat:'29g'}, spice:'None', badge:'Chef\'s Pick' },
-      { id:'2e', name:'Garlic Bread Sticks', price:169, cat:'Sides', image:'https://images.pexels.com/photos/4109139/pexels-photo-4109139.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Oven-baked sticks with garlic butter and herbs.', nutrition:{calories:310,protein:'9g',carbs:'44g',fat:'11g'}, spice:'None', badge:null },
-      { id:'2f', name:'Tomato Basil Soup', price:189, cat:'Soups', image:'https://images.pexels.com/photos/4103370/pexels-photo-4103370.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Slow-roasted tomatoes blended with basil and cream.', nutrition:{calories:220,protein:'6g',carbs:'22g',fat:'11g'}, spice:'Mild', badge:null },
-      { id:'2g', name:'Tiramisu Jar', price:249, cat:'Desserts', image:'https://images.pexels.com/photos/4109996/pexels-photo-4109996.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Coffee-soaked ladyfingers, mascarpone and cocoa in a jar.', nutrition:{calories:430,protein:'7g',carbs:'47g',fat:'23g'}, spice:'None', badge:null },
-      { id:'2h', name:'Choco Lava Cake', price:199, cat:'Desserts', image:'https://images.pexels.com/photos/4109995/pexels-photo-4109995.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Warm chocolate cake with gooey molten centre.', nutrition:{calories:480,protein:'6g',carbs:'57g',fat:'25g'}, spice:'None', badge:null },
-    ]
-  },
-  3: {
-    name: 'Urban Burger Co.',
-    area: 'MG Road • Indore',
-    cuisine: 'Burgers, Fast Food',
-    rating: 4.4,
-    reviews: '6.7k',
-    eta: '18–25 min',
-    costForTwo: '₹500 for two',
-    heroImage: 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    categories: ['All', 'Burgers', 'Sides', 'Drinks'],
-    foods: [
-      { id:'3a', name:'Classic Smash Burger', price:229, cat:'Burgers', image:'https://images.pexels.com/photos/4109130/pexels-photo-4109130.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Double smashed patty, cheddar, house sauce and pickles.', nutrition:{calories:690,protein:'31g',carbs:'52g',fat:'36g'}, spice:'Mild', badge:'Bestseller' },
-      { id:'3b', name:'Spicy Fried Chicken Burger', price:259, cat:'Burgers', image:'https://images.pexels.com/photos/3219483/pexels-photo-3219483.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Crispy fried chicken in spicy batter, lettuce, mayo and jalapeños.', nutrition:{calories:720,protein:'29g',carbs:'54g',fat:'38g'}, spice:'Spicy', badge:null },
-      { id:'3c', name:'Veggie Crunch Burger', price:199, cat:'Burgers', image:'https://images.pexels.com/photos/1603901/pexels-photo-1603901.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Crispy veg patty, cheddar, lettuce and burger sauce.', nutrition:{calories:580,protein:'17g',carbs:'55g',fat:'28g'}, spice:'Mild', badge:null },
-      { id:'3d', name:'Loaded Fries with Cheese', price:189, cat:'Sides', image:'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'French fries loaded with cheese sauce, jalapeños and herbs.', nutrition:{calories:640,protein:'12g',carbs:'68g',fat:'34g'}, spice:'Medium', badge:null },
-      { id:'3e', name:'BBQ Chicken Wings (6pc)', price:279, cat:'Sides', image:'https://images.pexels.com/photos/4109132/pexels-photo-4109132.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Char-grilled wings tossed in smoky BBQ glaze.', nutrition:{calories:540,protein:'32g',carbs:'21g',fat:'33g'}, spice:'Medium', badge:'Chef\'s Pick' },
-      { id:'3f', name:'Onion Rings Basket', price:159, cat:'Sides', image:'https://images.pexels.com/photos/4109133/pexels-photo-4109133.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Crispy battered onion rings with house dip.', nutrition:{calories:410,protein:'6g',carbs:'45g',fat:'22g'}, spice:'None', badge:null },
-      { id:'3g', name:'Chocolate Shake', price:179, cat:'Drinks', image:'https://images.pexels.com/photos/4109994/pexels-photo-4109994.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Thick chocolate shake topped with whipped cream.', nutrition:{calories:520,protein:'13g',carbs:'64g',fat:'22g'}, spice:'None', badge:null },
-      { id:'3h', name:'Strawberry Milkshake', price:179, cat:'Drinks', image:'https://images.pexels.com/photos/3731473/pexels-photo-3731473.jpeg?auto=compress&cs=tinysrgb&w=600', desc:'Fresh strawberry puree blended with ice cream and milk.', nutrition:{calories:490,protein:'12g',carbs:'60g',fat:'21g'}, spice:'None', badge:null },
-    ]
-  }
-}
+import { RESTAURANT_MENU } from '../../data/restaurants'
 
 const SPICE_COLORS = { None:'#6B7280', Mild:'#10B981', Medium:'#F59E0B', Spicy:'#EF4444' }
 const SPICE_LABELS = { None:'🌿 Mild', Mild:'🌱 Mild', Medium:'🌶 Medium', Spicy:'🔥 Spicy' }
@@ -664,7 +598,7 @@ export default function RestaurantDetail() {
               {cart.length === 0 ? (
                 <div className="cart-empty">
                   <div className="cart-empty-icon">🛒</div>
-                  <div className="cart-empty-text">Add items to get started</div>
+                  <div className="cart-empty-text">Your cart is empty. Add something delicious!</div>
                 </div>
               ) : (
                 <>
