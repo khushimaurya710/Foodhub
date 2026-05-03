@@ -31,7 +31,7 @@ export default function Chatbot() {
     const identifyUser = async () => {
       try {
         setLoadingIdentity(true);
-        const res = await axios.get("http://localhost:3000/api/chatbot/token", {
+        const res = await axios.get("https://foodhub-backend-yvpj.onrender.com/api/chatbot/token", {
           withCredentials: true,
         });
         const token = res.data.token;

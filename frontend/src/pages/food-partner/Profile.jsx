@@ -10,7 +10,7 @@ const Profile = () => {
     const [ deletingId, setDeletingId ] = useState(null)
 
     useEffect(() => {
-        axios.get(`http://localhost:3000/api/food-partner/${id}`, { withCredentials: true })
+        axios.get(`https://foodhub-backend-yvpj.onrender.com/api/food-partner/${id}`, { withCredentials: true })
             .then(response => {
                 setProfile(response.data.foodPartner)
                 setVideos(response.data.foodPartner.foodItems)
@@ -21,7 +21,7 @@ const Profile = () => {
         if (!window.confirm("Delete this reel permanently?")) return;
         try {
             setDeletingId(videoId);
-            await axios.delete(`http://localhost:3000/api/food/${videoId}`, { withCredentials: true });
+            await axios.delete(`hhttps://foodhub-backend-yvpj.onrender.com/api/food/${videoId}`, { withCredentials: true });
             setVideos(prev => prev.filter(v => v._id !== videoId));
         } finally {
             setDeletingId(null);
