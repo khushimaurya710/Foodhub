@@ -9,7 +9,7 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors({
-    origin: [ "http://localhost:5173", "http://localhost:5174" ],
+    origin: [ "http://localhost:5173", "http://localhost:5174", "https://foodhub-xi-azure.vercel.app" ],
     credentials: true
 }));
 app.use(cookieParser());
