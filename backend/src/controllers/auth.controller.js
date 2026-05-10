@@ -30,9 +30,11 @@ async function registerUser(req, res) {
     }, process.env.JWT_SECRET)
 
     res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none"
+       httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000
     })
 
     res.status(201).json({
@@ -79,8 +81,10 @@ async function loginUser(req, res) {
 
     res.cookie("token", token, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none"
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000
     })
 
     res.status(200).json({
@@ -95,9 +99,10 @@ async function loginUser(req, res) {
 
 function logoutUser(req, res) {
     res.clearCookie("token", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none"
+         httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/"
     });
 
     res.status(200).json({
@@ -135,9 +140,11 @@ async function registerFoodPartner(req, res) {
     }, process.env.JWT_SECRET)
 
     res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none"
+       httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000
     })
 
     res.status(201).json({
@@ -187,8 +194,10 @@ async function loginFoodPartner(req, res) {
 
     res.cookie("token", token, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none"
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000
     })
 
     res.status(200).json({
@@ -203,9 +212,10 @@ async function loginFoodPartner(req, res) {
 
 function logoutFoodPartner(req, res) {
     res.clearCookie("token", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none"
+         httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/"
     });
 
     res.status(200).json({
