@@ -99,10 +99,10 @@ export const RESTAURANT_MENU = {
     categories: ['All', 'Curries', 'Breads', 'Starters', 'Desserts'],
     foods: [
       { id: '4a', name: 'Butter Chicken', price: 389, cat: 'Curries', image: 'https://images.pexels.com/photos/7625056/pexels-photo-7625056.jpeg?auto=compress&cs=tinysrgb&w=600', desc: 'Rich tomato and butter gravy with smoky chicken.', nutrition: createNutrition(690, '33g', '24g', '50g'), spice: 'Medium', badge: 'Bestseller' },
-      { id: '4b', name: 'Paneer Lababdar', price: 329, cat: 'Curries', image: 'https://images.pexels.com/photos/1111312/pexels-photo-1111312.jpeg?auto=compress&cs=tinysrgb&w=600', desc: 'Paneer cubes in creamy onion tomato masala.', nutrition: createNutrition(560, '22g', '21g', '38g'), spice: 'Mild', badge: null },
+      { id: '4b', name: 'Paneer Lababdar', price: 329, cat: 'Curries', image: 'https://images.pexels.com/photos/11115801/pexels-photo-11115801.jpeg?auto=compress&cs=tinysrgb&w=600', desc: 'Paneer cubes in creamy onion tomato masala.', nutrition: createNutrition(560, '22g', '21g', '38g'), spice: 'Mild', badge: null },
       { id: '4c', name: 'Tandoori Roti (2pc)', price: 79, cat: 'Breads', image: 'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=600', desc: 'Fresh whole wheat tandoori rotis.', nutrition: createNutrition(190, '6g', '34g', '2g'), spice: 'None', badge: null },
-      { id: '4d', name: 'Paneer Tikka', price: 259, cat: 'Starters', image: 'https://images.pexels.com/photos/6941039/pexels-photo-6941039.jpeg?auto=compress&cs=tinysrgb&w=600', desc: 'Smoky paneer chunks grilled with peppers and onions.', nutrition: createNutrition(420, '20g', '16g', '29g'), spice: 'Medium', badge: null },
-      { id: '4e', name: 'Rabri Kulfi', price: 139, cat: 'Desserts', image: 'https://images.pexels.com/photos/6544372/pexels-photo-6544372.jpeg?auto=compress&cs=tinysrgb&w=600', desc: 'Dense saffron kulfi with rabri drizzle.', nutrition: createNutrition(340, '8g', '36g', '18g'), spice: 'None', badge: null },
+      { id: '4d', name: 'Paneer Tikka', price: 259, cat: 'Starters', image: 'https://images.pexels.com/photos/9609837/pexels-photo-9609837.jpeg?auto=compress&cs=tinysrgb&w=600', desc: 'Smoky paneer chunks grilled with peppers and onions.', nutrition: createNutrition(420, '20g', '16g', '29g'), spice: 'Medium', badge: null },
+      { id: '4e', name: 'Rabri Kulfi', price: 139, cat: 'Desserts', image: 'https://images.pexels.com/photos/17279074/pexels-photo-17279074.jpeg?auto=compress&cs=tinysrgb&w=600', desc: 'Dense saffron kulfi with rabri drizzle.', nutrition: createNutrition(340, '8g', '36g', '18g'), spice: 'None', badge: null },
     ],
   },
   5: {
